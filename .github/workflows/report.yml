@@ -1,0 +1,28 @@
+name: 新着の集計をDiscordに送る
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "7 0 * * 1"
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 状態を復元
+        uses: actions/cache/restore@v4
+        with:
+          path: state
+          key: watch-state-report-${{ github.run_id }}
+          restore-keys: watch-state-
+
+      - name: 集計してDiscordへ送信
+        env:
+          CONFIG_JSON: ${{ secrets.CONFIG_JSON }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          STATE_DIR: state
+          MINIMAL_LOG: "1"
+        run: python3 sekasuto_watch.py --report --to-discord
