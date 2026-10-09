@@ -401,7 +401,8 @@ def report(to_discord):
             cfg = load_config()
             if cfg["discord_webhook_url"]:
                 send_discord(cfg["discord_webhook_url"], {"username": "セカスト新着", "content": msg})
-        sys.exit(msg)
+           print(msg)
+           return
 
     if not to_discord:
         print(text)
